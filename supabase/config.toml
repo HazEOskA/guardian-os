@@ -1,0 +1,3 @@
+project_id = "tqdbrxdheqvisxtickqg"
+[functions.run-agent]
+verify_jwt = false
