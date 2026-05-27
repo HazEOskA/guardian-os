@@ -30,15 +30,27 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Guardian OS" },
-      { name: "description", content: "Agent Flow AI routes text through AI agents for analysis, decision-making, and structured output." },
+      {
+        name: "description",
+        content:
+          "Agent Flow AI routes text through AI agents for analysis, decision-making, and structured output.",
+      },
       { name: "author", content: "Guardian OS" },
       { property: "og:title", content: "Guardian OS" },
-      { property: "og:description", content: "Agent Flow AI routes text through AI agents for analysis, decision-making, and structured output." },
+      {
+        property: "og:description",
+        content:
+          "Agent Flow AI routes text through AI agents for analysis, decision-making, and structured output.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Guardian OS" },
       { name: "twitter:title", content: "Guardian OS" },
-      { name: "twitter:description", content: "Agent Flow AI routes text through AI agents for analysis, decision-making, and structured output." },
+      {
+        name: "twitter:description",
+        content:
+          "Agent Flow AI routes text through AI agents for analysis, decision-making, and structured output.",
+      },
     ],
     links: [
       {

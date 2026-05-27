@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // AI Agent runner - calls the configured AI gateway for a single agent step
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -160,13 +161,18 @@ Deno.serve(async (req) => {
       const t = await resp.text();
       console.error("AI gateway error", resp.status, t);
       if (resp.status === 429)
-        return new Response(JSON.stringify({ error: "Rate limit reached. Please wait a moment." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({ error: "Rate limit reached. Please wait a moment." }),
+          {
+            status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
       if (resp.status === 402)
         return new Response(
-          JSON.stringify({ error: "AI credits exhausted. Add credits in Settings → Workspace → Usage." }),
+          JSON.stringify({
+            error: "AI credits exhausted. Add credits in Settings → Workspace → Usage.",
+          }),
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       return new Response(JSON.stringify({ error: "AI gateway error" }), {
