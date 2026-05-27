@@ -17,12 +17,14 @@ export function GuardianOsWorkspace({
   enabled,
   input,
   setInput,
+  running,
   onPrimaryAction,
   onToggleAgent,
 }: {
   enabled: Record<AgentId, boolean>;
   input: string;
   setInput: (value: string) => void;
+  running: boolean;
   onPrimaryAction: () => void;
   onToggleAgent?: (agent: AgentId) => void;
 }) {
@@ -44,6 +46,7 @@ export function GuardianOsWorkspace({
               onChange={(e) => setInput(e.target.value)}
               placeholder="Describe your objective, or use a preset prompt..."
               className="flex-1 bg-transparent text-[12px] outline-none placeholder-[#6b7180] font-mono"
+              disabled={running}
             />
 
             {/* Dropdown */}
@@ -54,13 +57,18 @@ export function GuardianOsWorkspace({
             <button
               type="button"
               onClick={onPrimaryAction}
+              disabled={running || !input.trim()}
               className={cn(
                 "h-10 w-10 rounded-2xl border border-white/10 bg-[#090a0f]/50",
                 "flex items-center justify-center hover:bg-white/5 transition-colors",
               )}
               aria-label="Submit"
             >
-              <Plus className="h-4 w-4 text-white/80" />
+              {running ? (
+                <Loader2 className="h-4 w-4 text-white/80 animate-spin" />
+              ) : (
+                <Plus className="h-4 w-4 text-white/80" />
+              )}
             </button>
           </div>
         </div>
