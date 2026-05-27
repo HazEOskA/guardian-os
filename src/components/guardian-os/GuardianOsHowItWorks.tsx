@@ -28,9 +28,7 @@ export function GuardianOsHowItWorks() {
   return (
     <div className="px-5 pb-24">
       <div className="pt-4">
-        <h1 className="text-[14px] font-bold text-white tracking-wide">
-          How Guardian OS Works
-        </h1>
+        <h1 className="text-[14px] font-bold text-white tracking-wide">How Guardian OS Works</h1>
         <p className="mt-1 text-[10px] text-[#aeb4c7] font-mono leading-relaxed">
           Multi-agent architecture, summarized below.
         </p>
@@ -112,7 +110,11 @@ export function GuardianOsHowItWorks() {
 
             {/* Inner icon marker */}
             <g transform="translate(110 85)">
-              <circle r="20" fill="oklch(0.11 0.02 256 / 0.65)" stroke="oklch(0.75 0.14 195 / 0.5)" />
+              <circle
+                r="20"
+                fill="oklch(0.11 0.02 256 / 0.65)"
+                stroke="oklch(0.75 0.14 195 / 0.5)"
+              />
               <path
                 d="M-6 -2 C-4 -8, 4 -8, 6 -2 C8 4, -8 4, -6 -2 Z"
                 fill="none"
@@ -157,4 +159,3 @@ export function GuardianOsHowItWorks() {
     </div>
   );
 }
-

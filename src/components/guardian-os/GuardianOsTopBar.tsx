@@ -78,10 +78,7 @@ export function GuardianOsTopBar({
         )}
 
         {(variant === "learn" || variant === "agents") && (
-          <button
-            className="p-1 rounded-lg hover:bg-white/5 transition-colors"
-            aria-label="More"
-          >
+          <button className="p-1 rounded-lg hover:bg-white/5 transition-colors" aria-label="More">
             <Grid2X2 className="h-4 w-4 text-neutral-400" />
           </button>
         )}
@@ -89,4 +86,3 @@ export function GuardianOsTopBar({
     </header>
   );
 }
-

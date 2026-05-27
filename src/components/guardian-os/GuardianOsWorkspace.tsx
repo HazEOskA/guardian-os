@@ -51,7 +51,9 @@ export function GuardianOsWorkspace({
 
             {/* Dropdown */}
             <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-black/30 px-3 py-2">
-              <span className="text-[10px] font-mono text-[#aeb4c7] uppercase tracking-wide">Smart Route</span>
+              <span className="text-[10px] font-mono text-[#aeb4c7] uppercase tracking-wide">
+                Smart Route
+              </span>
             </div>
 
             <button
@@ -97,7 +99,9 @@ export function GuardianOsWorkspace({
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-[11px] font-mono font-bold text-white truncate">{row.title}</div>
+                  <div className="text-[11px] font-mono font-bold text-white truncate">
+                    {row.title}
+                  </div>
                   <div className="mt-1 text-[9px] font-mono text-[#aeb4c7] uppercase tracking-wider">
                     {row.status}
                   </div>
@@ -143,4 +147,3 @@ export function GuardianOsWorkspace({
     </div>
   );
 }
-

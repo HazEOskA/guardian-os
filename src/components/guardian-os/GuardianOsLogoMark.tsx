@@ -60,4 +60,3 @@ export function GuardianOsLogoMark({ className }: { className?: string }) {
     </div>
   );
 }
-

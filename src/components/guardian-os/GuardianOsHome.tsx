@@ -70,4 +70,3 @@ export function GuardianOsHome({ onGetStarted }: { onGetStarted: () => void }) {
     </div>
   );
 }
-

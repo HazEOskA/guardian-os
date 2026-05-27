@@ -5,17 +5,11 @@ import type { AgentId } from "@/lib/agents";
 import { AGENT_ORDER } from "@/lib/agents";
 import { GuardianOsAgentMiniCard } from "@/components/guardian-os/GuardianOsAgentMiniCard";
 
-export function GuardianOsAgents({
-  enabled,
-}: {
-  enabled: Record<AgentId, boolean>;
-}) {
+export function GuardianOsAgents({ enabled }: { enabled: Record<AgentId, boolean> }) {
   return (
     <div className="pt-3 pb-24">
       <div className="px-5 pt-2">
-        <h1 className="text-[14px] font-bold text-white tracking-wide">
-          Guardian Agents
-        </h1>
+        <h1 className="text-[14px] font-bold text-white tracking-wide">Guardian Agents</h1>
         <p className="mt-1 text-[10px] text-[#aeb4c7] font-mono leading-relaxed">
           Specialized agents for high-impact analysis.
         </p>
@@ -52,4 +46,3 @@ export function GuardianOsAgents({
     </div>
   );
 }
-
