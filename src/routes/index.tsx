@@ -235,7 +235,10 @@ function Index() {
             <GuardianOsWorkspace
               enabled={enabled}
               input={input}
-              setInput={setInput}
+              setInput={(v) => {
+                setInput(v);
+                if (!running && results.length > 0) setResults([]);
+              }}
               running={running}
               onPrimaryAction={run}
               onToggleAgent={toggleAgent}

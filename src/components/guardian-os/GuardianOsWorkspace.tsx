@@ -175,7 +175,7 @@ export function GuardianOsWorkspace({
                       : "text-warning border-warning/30 bg-warning/10",
                 )}
               >
-                {running ? "In Progress" : "Complete"}
+                {running ? "In Progress" : pct === 100 ? "Complete" : "Partial"}
               </span>
             </div>
 
