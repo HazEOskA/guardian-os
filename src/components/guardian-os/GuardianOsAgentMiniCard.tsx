@@ -1,18 +1,11 @@
 import * as React from "react";
-import {
-  Fingerprint,
-  GitBranch,
-  Radar,
-  ShieldAlert,
-  Target,
-  CheckCircle2,
-} from "lucide-react";
+import { Fingerprint, GitBranch, Radar, ShieldAlert, Target, CheckCircle2 } from "lucide-react";
 
 import type { AgentId } from "@/lib/agents";
 import { AGENT_META } from "@/lib/agents";
 import { cn } from "@/lib/utils";
 
-const ICON_MAP: Record<string, React.ComponentType<any>> = {
+const ICON_MAP: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
   Radar: Radar,
   Fingerprint: Fingerprint,
   GitBranch: GitBranch,
@@ -28,13 +21,7 @@ const COLOR_TEXT: Record<AgentId, string> = {
   risk: "text-risk",
 };
 
-export function GuardianOsAgentMiniCard({
-  agent,
-  enabled,
-}: {
-  agent: AgentId;
-  enabled: boolean;
-}) {
+export function GuardianOsAgentMiniCard({ agent, enabled }: { agent: AgentId; enabled: boolean }) {
   const meta = AGENT_META[agent];
   const Icon = ICON_MAP[meta.icon];
 
@@ -92,4 +79,3 @@ export function GuardianOsAgentMiniCard({
     </div>
   );
 }
-
