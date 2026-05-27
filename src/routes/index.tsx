@@ -20,6 +20,8 @@ import { GuardianOsHome } from "@/components/guardian-os/GuardianOsHome";
 import { GuardianOsWorkspace } from "@/components/guardian-os/GuardianOsWorkspace";
 import { GuardianOsHowItWorks } from "@/components/guardian-os/GuardianOsHowItWorks";
 import { GuardianOsAgents } from "@/components/guardian-os/GuardianOsAgents";
+import { GuardianOsBottomNav, type NavTab } from "@/components/guardian-os/GuardianOsBottomNav";
+import { GuardianOsHistoryDrawer } from "@/components/guardian-os/GuardianOsHistoryDrawer";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -39,6 +41,8 @@ export const Route = createFileRoute("/")({
   }),
 });
 
+type Screen = "home" | "workspace" | "learn" | "agents";
+
 function Index() {
   const [input, setInput] = useState("");
   const [tag, setTag] = useState<Tag>("general");
@@ -54,11 +58,10 @@ function Index() {
   const [history, setHistory] = useState<Run[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
-  const [screen, setScreen] = useState<"home" | "workspace" | "learn" | "agents">("home");
+  const [screen, setScreen] = useState<Screen>("home");
 
   useEffect(() => {
     setHistory(loadRuns());
-    // Ingest startup terminal logs
     setTerminalLogs([
       "SYSTEM BOOT: Guardian OS v1.0.4 initialized",
       "SECURE CORE: Encrypted memory buffers armed",
@@ -90,6 +93,7 @@ function Index() {
     setRunning(true);
     const initial: AgentResult[] = selectedAgents.map((a) => ({ agent: a, status: "pending" }));
     setResults(initial);
+    setScreen("workspace");
 
     setTerminalLogs([]);
     addLog("SYS: Initiating multi-agent cognitive pipeline...");
@@ -138,12 +142,10 @@ function Index() {
 
     setRunning(false);
     addLog("SYS: Multi-agent execution cycle finalized.");
-    // Visual parity with the reference: stay on the workspace screen.
-    setScreen("workspace");
 
-    // save run
+    // Save run
     setResults((prev) => {
-      const run: Run = {
+      const newRun: Run = {
         id: crypto.randomUUID(),
         createdAt: Date.now(),
         input,
@@ -151,7 +153,7 @@ function Index() {
         agents: selectedAgents,
         results: prev,
       };
-      const updated = [run, ...loadRuns()].slice(0, 50);
+      const updated = [newRun, ...loadRuns()].slice(0, 50);
       saveRuns(updated);
       setHistory(updated);
       return prev;
@@ -168,7 +170,6 @@ function Index() {
     setTerminalLogs([]);
     addLog(`SYS: Loaded historical run execution [ID: ${r.id.substring(0, 8)}]`);
     r.results.forEach((res) => {
-      const meta = AGENT_META[res.agent];
       if (res.status === "done") {
         addLog(`${res.agent.toUpperCase()}: Restored success logs (${res.durationMs}ms)`);
       } else {
@@ -193,14 +194,38 @@ function Index() {
     });
   };
 
+  /* ── Bottom nav ──────────────────────────────────────────────────── */
+  const handleNavTab = (tab: NavTab) => {
+    if (tab === "home" || tab === "workspaces" || tab === "new") {
+      setScreen("workspace");
+    } else if (tab === "agents") {
+      setScreen("agents");
+    }
+    // profile: no-op for now
+  };
+
+  const navActive: NavTab = screen === "agents" ? "agents" : "home";
+  const showBottomNav = screen === "workspace" || screen === "agents";
+
   return (
     <GuardianOsPhoneFrame>
       <div className="relative flex flex-col h-full w-full">
         <Toaster theme="dark" position="top-center" />
 
-        {screen === "home" ? <GuardianOsHome onGetStarted={() => setScreen("workspace")} /> : null}
+        {/* History drawer — rendered at root so it covers the frame */}
+        <GuardianOsHistoryDrawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          history={history}
+          onLoadRun={loadRun}
+          onClearHistory={clearHistory}
+        />
 
-        {screen === "workspace" ? (
+        {/* ── Home splash ─────────────────────────────────────────────── */}
+        {screen === "home" && <GuardianOsHome onGetStarted={() => setScreen("workspace")} />}
+
+        {/* ── Workspace ───────────────────────────────────────────────── */}
+        {screen === "workspace" && (
           <>
             <GuardianOsTopBar
               variant="workspace"
@@ -213,24 +238,34 @@ function Index() {
               setInput={setInput}
               running={running}
               onPrimaryAction={run}
-              onToggleAgent={(agent) => toggleAgent(agent)}
+              onToggleAgent={toggleAgent}
+              results={results}
+              terminalLogs={terminalLogs}
+              history={history}
+              onLoadRun={loadRun}
+              onHistoryOpen={() => setDrawerOpen(true)}
             />
           </>
-        ) : null}
+        )}
 
-        {screen === "learn" ? (
+        {/* ── How it works ────────────────────────────────────────────── */}
+        {screen === "learn" && (
           <>
             <GuardianOsTopBar variant="learn" onBack={() => setScreen("workspace")} />
             <GuardianOsHowItWorks />
           </>
-        ) : null}
+        )}
 
-        {screen === "agents" ? (
+        {/* ── Agents ──────────────────────────────────────────────────── */}
+        {screen === "agents" && (
           <>
             <GuardianOsTopBar variant="agents" onBack={() => setScreen("workspace")} />
             <GuardianOsAgents enabled={enabled} />
           </>
-        ) : null}
+        )}
+
+        {/* ── Bottom nav (workspace + agents screens) ─────────────────── */}
+        {showBottomNav && <GuardianOsBottomNav active={navActive} onTab={handleNavTab} />}
       </div>
     </GuardianOsPhoneFrame>
   );
