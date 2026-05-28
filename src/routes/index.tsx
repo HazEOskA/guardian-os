@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import {
   AGENT_META,
   AGENT_ORDER,
@@ -109,13 +108,15 @@ function Index() {
       const t0 = performance.now();
 
       try {
-        const { data, error } = await supabase.functions.invoke("run-agent", {
-          body: { agent, input, prior: collected },
+        const res = await fetch("/api/run-agent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ agent, input, prior: collected }),
         });
-        if (error) throw new Error(error.message);
-        if ((data as any)?.error) throw new Error((data as any).error);
+        const data = await res.json();
+        if (!res.ok || data?.error) throw new Error(data?.error || "Agent failed");
         const dur = Math.round(performance.now() - t0);
-        collected[agent] = (data as any).result;
+        collected[agent] = data.result;
 
         setResults((prev) =>
           prev.map((r) =>
