@@ -1,160 +1,175 @@
 import * as React from "react";
-import { ArrowRight, ShieldCheck, Sparkles, Terminal, Zap } from "lucide-react";
+import { ShieldCheck, Sparkles, Terminal, Zap } from "lucide-react";
 
 const STEPS = [
   {
-    title: "1. You Input",
-    body: "Provide input, scenario, document, or objective in natural language.",
+    num: "1",
+    title: "You Input",
+    body: "Provide a question, document, or objective in natural language.",
     icon: Terminal,
+    color: "text-scanner",
+    borderBg: "border-scanner/20 bg-scanner/5",
   },
   {
-    title: "2. Route to Agents",
-    body: "Guardian OS routes your task to specialized reasoning agents.",
+    num: "2",
+    title: "Routed to Agents",
+    body: "Guardian OS analyzes and routes to the best specialized AI agents.",
     icon: Zap,
+    color: "text-analyst",
+    borderBg: "border-analyst/20 bg-analyst/5",
   },
   {
-    title: "3. Multi-Agent Analysis",
-    body: "Scanner, Analyst, Decision, Strategy & Risk operate in parallel—converging on output.",
+    num: "3",
+    title: "Multi-Agent Analysis",
+    body: "Agents work in parallel to research, validate, and generate insights.",
     icon: Sparkles,
+    color: "text-strategy",
+    borderBg: "border-strategy/20 bg-strategy/5",
   },
   {
-    title: "4. Structured Output",
-    body: "You receive clear results: validated facts, risk flags, and action steps.",
+    num: "4",
+    title: "Structured Output",
+    body: "You receive a clear, structured output for faster decisions and actions.",
     icon: ShieldCheck,
+    color: "text-risk",
+    borderBg: "border-risk/20 bg-risk/5",
   },
 ];
 
 export function GuardianOsHowItWorks() {
   return (
-    <div className="px-5 pb-24">
-      <div className="pt-4">
-        <h1 className="text-[14px] font-bold text-white tracking-wide">How Guardian OS Works</h1>
-        <p className="mt-1 text-[10px] text-[#aeb4c7] font-mono leading-relaxed">
-          Multi-agent architecture, summarized below.
-        </p>
-      </div>
+    <div className="flex-1 flex flex-col overflow-y-auto mobile-scrollbar">
+      <div className="flex-1 px-5 pb-4">
+        <div className="pt-2">
+          <h1 className="text-[14px] font-bold text-white tracking-wide">
+            How Guardian OS Works
+          </h1>
+          <p className="mt-1 text-[10px] text-[#aeb4c7] font-mono leading-relaxed">
+            Multi-agent intelligence. Structured output.
+          </p>
+        </div>
 
-      <div className="mt-6 relative">
-        {/* Central layered stack */}
-        <div className="relative mx-auto w-[210px] h-[170px]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(115,185,255,0.30),transparent_60%)]" />
-          <svg viewBox="0 0 220 180" className="absolute inset-0 w-full h-full" aria-hidden="true">
+        {/* Layered stack illustration */}
+        <div className="mt-5 relative mx-auto w-full max-w-[260px] h-[160px]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(115,185,255,0.28),transparent_58%)]" />
+          <svg viewBox="0 0 260 165" className="absolute inset-0 w-full h-full" aria-hidden="true">
             <defs>
-              <linearGradient id="how_line" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="oklch(0.75 0.14 195)" stopOpacity="0.7" />
-                <stop offset="1" stopColor="oklch(0.7 0.17 290)" stopOpacity="0.45" />
+              <linearGradient id="hiw_g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stopColor="oklch(0.75 0.14 195)" stopOpacity="0.85" />
+                <stop offset="1" stopColor="oklch(0.7 0.17 290)" stopOpacity="0.55" />
               </linearGradient>
-              <filter id="how_glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="2.6" result="blur" />
+              <filter id="hiw_f" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="2.8" result="b" />
                 <feMerge>
-                  <feMergeNode in="blur" />
+                  <feMergeNode in="b" />
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
             </defs>
 
-            {/* Left connectors */}
-            <path
-              d="M25 110 C55 75, 75 60, 92 52"
-              fill="none"
-              stroke="url(#how_line)"
-              strokeWidth="2"
-              strokeDasharray="6 6"
-              filter="url(#how_glow)"
-            />
-            <path
-              d="M42 140 C70 120, 80 108, 98 98"
-              fill="none"
-              stroke="url(#how_line)"
-              strokeWidth="1.6"
-              strokeDasharray="4 7"
-              filter="url(#how_glow)"
-              opacity="0.8"
-            />
-
-            {/* Right connectors */}
-            <path
-              d="M195 110 C165 75, 145 60, 128 52"
-              fill="none"
-              stroke="url(#how_line)"
-              strokeWidth="2"
-              strokeDasharray="6 6"
-              filter="url(#how_glow)"
-            />
-            <path
-              d="M178 140 C150 120, 140 108, 122 98"
-              fill="none"
-              stroke="url(#how_line)"
-              strokeWidth="1.6"
-              strokeDasharray="4 7"
-              filter="url(#how_glow)"
-              opacity="0.8"
-            />
-
-            {/* Stack cards */}
+            {/* Stacked hexagonal layers */}
             {[
-              { y: 42, s: 0.92, o: 0.35, c: "oklch(0.75 0.14 195 / 0.28)" },
-              { y: 62, s: 0.86, o: 0.25, c: "oklch(0.7 0.17 290 / 0.24)" },
-              { y: 82, s: 0.8, o: 0.22, c: "oklch(0.78 0.16 145 / 0.2)" },
-            ].map((layer, idx) => (
-              <g key={idx} transform={`translate(110 ${layer.y}) scale(${layer.s})`}>
-                <path
-                  d="M-55 0 L0 -40 L55 0 L0 40 Z"
-                  fill={layer.c}
-                  stroke="url(#how_line)"
-                  strokeWidth="1.2"
-                  opacity={layer.o}
-                />
-              </g>
+              { cy: 32, rx: 68, ry: 28, o: 0.22 },
+              { cy: 52, rx: 60, ry: 25, o: 0.18 },
+              { cy: 70, rx: 52, ry: 22, o: 0.14 },
+              { cy: 86, rx: 44, ry: 19, o: 0.10 },
+            ].map((l, i) => (
+              <ellipse
+                key={i}
+                cx={130}
+                cy={l.cy}
+                rx={l.rx}
+                ry={l.ry}
+                fill="none"
+                stroke="url(#hiw_g)"
+                strokeWidth="1.4"
+                opacity={l.o + 0.15}
+              />
             ))}
 
-            {/* Inner icon marker */}
-            <g transform="translate(110 85)">
+            {/* Connector dashes to outer nodes */}
+            {[
+              { x1: 35, y1: 100, x2: 100, y2: 62 },
+              { x1: 225, y1: 100, x2: 160, y2: 62 },
+              { x1: 55, y1: 128, x2: 108, y2: 95 },
+              { x1: 205, y1: 128, x2: 152, y2: 95 },
+            ].map((l, i) => (
+              <line
+                key={i}
+                x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}
+                stroke="url(#hiw_g)"
+                strokeWidth="1.4"
+                strokeDasharray="5 5"
+                opacity="0.55"
+                filter="url(#hiw_f)"
+              />
+            ))}
+
+            {/* Centre circle */}
+            <circle
+              cx={130} cy={82}
+              r={22}
+              fill="oklch(0.09 0.02 256 / 0.88)"
+              stroke="oklch(0.75 0.14 195 / 0.55)"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M123 80 C125 72, 135 72, 137 80 C139 88, 121 88, 123 80 Z"
+              fill="none"
+              stroke="url(#hiw_g)"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              filter="url(#hiw_f)"
+            />
+
+            {/* Outer node dots */}
+            {[
+              { x: 35, y: 100 }, { x: 225, y: 100 },
+              { x: 55, y: 128 }, { x: 205, y: 128 },
+            ].map((p, i) => (
               <circle
-                r="20"
-                fill="oklch(0.11 0.02 256 / 0.65)"
-                stroke="oklch(0.75 0.14 195 / 0.5)"
+                key={i}
+                cx={p.x} cy={p.y} r="4.5"
+                fill="oklch(0.75 0.14 195 / 0.75)"
+                filter="url(#hiw_f)"
               />
-              <path
-                d="M-6 -2 C-4 -8, 4 -8, 6 -2 C8 4, -8 4, -6 -2 Z"
-                fill="none"
-                stroke="oklch(0.75 0.14 195 / 0.85)"
-                strokeWidth="3"
-                strokeLinecap="round"
-              />
-            </g>
+            ))}
           </svg>
+        </div>
+
+        {/* Numbered steps */}
+        <div className="mt-5 space-y-3">
+          {STEPS.map((s) => {
+            const Icon = s.icon;
+            return (
+              <div
+                key={s.num}
+                className={`flex items-start gap-3 rounded-2xl border ${s.borderBg} p-4`}
+              >
+                <div
+                  className={`h-8 w-8 rounded-xl border border-current/20 bg-black/30 flex items-center justify-center shrink-0 ${s.color}`}
+                >
+                  <span className={`text-[11px] font-black font-mono ${s.color}`}>{s.num}</span>
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[11px] font-mono font-bold text-white">{s.title}</div>
+                  <div className="mt-0.5 text-[10px] font-mono text-[#aeb4c7] leading-relaxed">
+                    {s.body}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Steps list */}
-      <div className="mt-6 space-y-3">
-        {STEPS.map((s) => {
-          const Icon = s.icon;
-          return (
-            <div
-              key={s.title}
-              className="relative flex items-start gap-3 rounded-2xl border border-white/10 bg-black/20 backdrop-blur-sm p-4"
-            >
-              <div className="relative mt-0.5">
-                <div className="h-10 w-10 rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(115,185,255,0.25),transparent_55%)] flex items-center justify-center">
-                  <Icon className="h-4 w-4 text-[#aeb4c7]" />
-                </div>
-              </div>
-              <div className="min-w-0">
-                <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-white">
-                  {s.title}
-                </div>
-                <div className="mt-1 text-[10px] font-mono text-[#aeb4c7] leading-relaxed">
-                  {s.body}
-                </div>
-              </div>
-              <div className="ml-auto pt-1 opacity-70">
-                <ArrowRight className="h-4 w-4 text-[#5b6170]" />
-              </div>
-            </div>
-          );
-        })}
+      {/* Bottom banner */}
+      <div className="shrink-0 mx-5 mb-6">
+        <div className="rounded-2xl bg-[linear-gradient(135deg,oklch(0.75_0.14_195/0.12),oklch(0.7_0.17_290/0.08))] border border-scanner/20 px-5 py-4 text-center">
+          <div className="text-[11px] font-bold text-white tracking-wide">
+            Built for clarity. Designed for impact.
+          </div>
+        </div>
       </div>
     </div>
   );
