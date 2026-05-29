@@ -41,3 +41,7 @@ dist-ssr
 
 # Generated/vendor workspaces
 .workspace/
+
+# Local/session hygiene
+aTechGPTreposguardian-os
+.vercel/
