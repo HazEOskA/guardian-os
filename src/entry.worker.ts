@@ -1,5 +1,4 @@
 import { createStartHandler, defaultStreamHandler } from "@tanstack/react-start/server";
-import Anthropic from "@anthropic-ai/sdk";
 
 const startFetch = createStartHandler(defaultStreamHandler);
 
@@ -39,25 +38,38 @@ async function handleRunAgent(request: Request, env: Record<string, string>): Pr
       prior: Record<string, string>;
     };
 
-    const apiKey = env.ANTHROPIC_API_KEY;
+    const apiKey = env.GEMINI_API_KEY;
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY not set" }), { status: 500, headers });
+      return new Response(JSON.stringify({ error: "GEMINI_API_KEY not set" }), { status: 500, headers });
     }
-
-    const client = new Anthropic({ apiKey });
 
     const priorContext = Object.keys(prior ?? {}).length > 0
       ? `\n\nPRIOR AGENT OUTPUTS:\n${Object.entries(prior).map(([k, v]) => `[${k.toUpperCase()}]:\n${v}`).join("\n\n")}`
       : "";
 
-    const msg = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 1024,
-      system: AGENT_PROMPTS[agent] ?? "You are a Guardian OS intelligence agent. Analyze the input.",
-      messages: [{ role: "user", content: `INPUT:\n${input}${priorContext}` }],
-    });
+    const systemPrompt = AGENT_PROMPTS[agent] ?? "You are a Guardian OS intelligence agent. Analyze the input.";
+    const userContent = `INPUT:\n${input}${priorContext}`;
 
-    const result = msg.content[0].type === "text" ? msg.content[0].text : "";
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ role: "user", parts: [{ text: userContent }] }],
+          generationConfig: { maxOutputTokens: 1024 },
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.text();
+      return new Response(JSON.stringify({ error: `Gemini API error: ${err}` }), { status: 500, headers });
+    }
+
+    const json = await res.json() as any;
+    const result = json?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
     return new Response(JSON.stringify({ result }), { headers });
   } catch (e: any) {
     return new Response(JSON.stringify({ error: e.message ?? "Agent failed" }), { status: 500, headers });
