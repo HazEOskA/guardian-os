@@ -1,13 +1,43 @@
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync, readdirSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const indexPath = resolve(__dirname, "../dist/server/index.js");
+const distServer = resolve(__dirname, "../dist/server");
+const distClient = resolve(__dirname, "../dist/client");
 
-const original = readFileSync(indexPath, "utf-8");
+// Find client assets
+const clientAssets = readdirSync(resolve(distClient, "assets"));
+const cssFile = clientAssets.find((f) => f.endsWith(".css"));
+const manifestFile = readdirSync(resolve(distServer, "assets")).find((f) =>
+  f.startsWith("_tanstack-start-manifest")
+);
 
-const apiHandler = `
+if (!cssFile) { console.error("❌ patch-worker: no CSS file found in dist/client/assets/"); process.exit(1); }
+if (!manifestFile) { console.error("❌ patch-worker: no manifest file found in dist/server/assets/"); process.exit(1); }
+
+// Read client entry from manifest
+const manifestSrc = readFileSync(resolve(distServer, "assets", manifestFile), "utf-8");
+const entryMatch = manifestSrc.match(/"?clientEntry"?\s*:\s*"([^"]+)"/);
+if (!entryMatch) { console.error("❌ patch-worker: could not find clientEntry in manifest"); process.exit(1); }
+const clientEntry = entryMatch[1]; // e.g. "/assets/index-Cn97Ez5_.js"
+const cssHref = `/assets/${cssFile}`;
+
+const HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guardian OS</title>
+  <link rel="stylesheet" href="${cssHref}" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="${clientEntry}"></script>
+</body>
+</html>`;
+
+const worker = `
 const __AGENT_PROMPTS = {
   scanner: \`You are the SCANNER NODE (SYS-SCAN v2.04) of Guardian OS.
 Extract topic, intent, key signals, and initial risks from the input.
@@ -17,7 +47,7 @@ Separate facts from assumptions, identify data gaps, reveal opportunities.
 Format: CONFIRMED FACTS, ASSUMPTIONS, CRITICAL GAPS, OPPORTUNITIES. 2-3 sentences per section.\`,
   decision: \`You are the DECISION NODE (DECIDE-MATRIX v3.80) of Guardian OS.
 Evaluate options, weigh trade-offs, recommend the optimal path.
-Format: OPTION A, OPTION B, RECOMMENDATION. 2-3 sentences per section.\`,
+Format: OPTION A, OPTION B, OPTION C (if relevant), RECOMMENDATION. 2-3 sentences per section.\`,
   strategy: \`You are the STRATEGY NODE (EXEC-ENGINE v1.95) of Guardian OS.
 Translate the decision into a concrete execution plan.
 Format: numbered ACTION STEPS (5-7), KEY DEPENDENCIES, REQUIRED RESOURCES.\`,
@@ -26,7 +56,9 @@ Assess systemic danger, assign threat score 0-100, flag warnings.
 Format: RISK SCORE: X/100, THREAT VECTORS, CRITICAL WARNINGS, VERDICT.\`,
 };
 
-async function __handleRunAgent(request, env) {
+const HTML = ${JSON.stringify(HTML)};
+
+async function handleRunAgent(request, env) {
   const headers = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" };
   try {
     const { agent, input, prior } = await request.json();
@@ -55,37 +87,22 @@ async function __handleRunAgent(request, env) {
     return new Response(JSON.stringify({ error: e.message ?? "Agent failed" }), { status: 500, headers });
   }
 }
-`;
 
-// Replace the default export with a wrapped version
-const patched = original
-  .replace(
-    /export\s*\{[^}]*\b(\w+)\s+as\s+default[^}]*\};?\s*$/m,
-    (match, exportName) => `
-${apiHandler}
-const __tanstackDefault = ${exportName};
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === "/api/run-agent" && request.method === "POST") {
-      return __handleRunAgent(request, env);
+      return handleRunAgent(request, env);
     }
     if (url.pathname === "/api/run-agent" && request.method === "OPTIONS") {
       return new Response(null, { headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "POST", "Access-Control-Allow-Headers": "Content-Type" } });
     }
-    if (__tanstackDefault && __tanstackDefault.fetch) {
-      return __tanstackDefault.fetch(request, env, ctx);
-    }
-    return new Response("Not found", { status: 404 });
+    return new Response(HTML, { headers: { "Content-Type": "text/html; charset=utf-8" } });
   }
 };
-`
-  );
+`.trimStart();
 
-if (patched === original) {
-  console.error("❌ patch-worker: could not find export pattern in dist/server/index.js");
-  process.exit(1);
-}
-
-writeFileSync(indexPath, patched);
-console.log("✅ patch-worker: dist/server/index.js patched with /api/run-agent handler");
+writeFileSync(resolve(distServer, "index.js"), worker);
+console.log("✅ patch-worker: dist/server/index.js replaced with minimal self-contained worker");
+console.log("   Client entry: " + clientEntry);
+console.log("   CSS:          " + cssHref);
