@@ -90,6 +90,6 @@ export default {
       });
     }
 
-    return (startFetch as any)(request, env);
+    return (startFetch as any)(request);
   },
 };
