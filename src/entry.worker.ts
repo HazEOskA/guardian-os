@@ -90,6 +90,6 @@ export default {
       });
     }
 
-    return startFetch({ request, env, ctx } as any);
+    return (startFetch as any)(request, env);
   },
 };
