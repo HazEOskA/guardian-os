@@ -51,7 +51,7 @@ async function handleRunAgent(request: Request, env: Record<string, string>): Pr
     const userContent = `INPUT:\n${input}${priorContext}`;
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
